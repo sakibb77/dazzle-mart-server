@@ -35,4 +35,44 @@ const userScheme = new mongoose.Schema(
   }
 );
 
+//=============SIGN UP METHOD=================
+userScheme.statics.signup = async function (
+  name,
+  email,
+  password,
+  image,
+  address,
+  ocupation
+) {
+  if (!name || !email || !password || !image || !address || ocupation) {
+    throw new Error("all fields must be filled");
+  }
+
+  if (!validator.isEmail(email)) {
+    throw new Error("invalid email");
+  }
+
+  if (!validator.idStrongPassword(password)) {
+    throw new Error("password is not strong");
+  }
+
+  //----------GENARATE SALT-----------
+  const salt = await bcrypt.genSalt(10);
+
+  //----------PASS WORD HASING-----------------
+  const hash = await bcrypt.hash(password, salt);
+
+  //---------create user---------
+  const user = await this.create({
+    name,
+    email,
+    password: hash,
+    image,
+    address,
+    ocupation,
+  });
+
+  return user;
+};
+
 module.exports = mongoose.model("User", userScheme);

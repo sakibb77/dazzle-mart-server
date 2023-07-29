@@ -4,6 +4,8 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 
+const userRoutes = require("./routes/user.route");
+
 //variables
 const PORT = process.env.PORT || 4000;
 const uri = process.env.MONGO_URI;
@@ -19,6 +21,8 @@ app.use(cors({ credentials: true }));
 app.get("/", (req, res) => {
   res.status(200).json("welcome to dezzle mart server");
 });
+
+app.use("/api/user", userRoutes);
 
 //database
 mongoose

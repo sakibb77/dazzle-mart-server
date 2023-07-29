@@ -75,4 +75,27 @@ userScheme.statics.signup = async function (
   return user;
 };
 
+//LOGIN METHOD
+userScheme.statics.login = async function (email, password) {
+  if (!email) {
+    throw new Error("please enter your email");
+  }
+
+  if (!password) {
+    throw new Error("please enter your password");
+  }
+
+  const user = await this.findOne({ email });
+
+  if (!user) {
+    throw new Error("incorrect email or password");
+  }
+
+  const match = bcrypt.compare(password, user.password);
+
+  if (!match) {
+    throw new Error("incorrect email or password");
+  }
+};
+
 module.exports = mongoose.model("User", userScheme);

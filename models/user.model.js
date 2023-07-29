@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const bcrypt = require(bcrypt);
+const bcrypt = require("bcrypt");
 
-const userScheme = new mongoose.Schema(
+const schema = mongoose.Schema;
+
+const userScheme = new schema(
   {
     name: {
       type: String,
@@ -25,6 +27,7 @@ const userScheme = new mongoose.Schema(
       required: true,
     },
     role: {
+      type: String,
       enum: ["user", "seller", "admin"],
       default: "user",
       required: true,
@@ -44,7 +47,7 @@ userScheme.statics.signup = async function (
   address,
   ocupation
 ) {
-  if (!name || !email || !password || !image || !address || ocupation) {
+  if (!name || !email || !password || !image || !address || !ocupation) {
     throw new Error("all fields must be filled");
   }
 
@@ -52,7 +55,7 @@ userScheme.statics.signup = async function (
     throw new Error("invalid email");
   }
 
-  if (!validator.idStrongPassword(password)) {
+  if (!validator.isStrongPassword(password)) {
     throw new Error("password is not strong");
   }
 
@@ -91,7 +94,7 @@ userScheme.statics.login = async function (email, password) {
     throw new Error("incorrect email or password");
   }
 
-  const match = bcrypt.compare(password, user.password);
+  const match = await bcrypt.compare(password, user.password);
 
   if (!match) {
     throw new Error("incorrect email or password");

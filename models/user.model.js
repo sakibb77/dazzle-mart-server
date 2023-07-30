@@ -14,6 +14,10 @@ const userScheme = new schema(
       type: String,
       required: true,
     },
+    password: {
+      type: String,
+      required: true,
+    },
     image: {
       type: String,
       required: true,
@@ -57,6 +61,12 @@ userScheme.statics.signup = async function (
 
   if (!validator.isStrongPassword(password)) {
     throw new Error("password is not strong");
+  }
+
+  const exist = await this.findOne({ email });
+
+  if (exist) {
+    throw new Error("email already exist");
   }
 
   //----------GENARATE SALT-----------
